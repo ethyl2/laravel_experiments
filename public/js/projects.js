@@ -75,21 +75,23 @@ class Form {
   }
 
   /**
-   * Resets all fields in the Form instance.
+   * Resets all fields and errors in the Form instance.
    */
   reset() {
     for (let field in originalData) {
       this[field] = '';
     }
+    this.errors.clear();
   }
 
   /**
    * Returns all of the relevant data needed for submission (and omits the irrelevant data).
    */
   data() {
-    let data = Object.assign({}, this);
-    delete data.originalData;
-    delete data.errors;
+    let data = {};
+    for (let property in this.originalData) {
+      data[property] = this[property]
+    }
     return data;
   }
 
@@ -100,30 +102,38 @@ class Form {
    * @param { *string } route
    */
   submit(method, route) {
-    axios[method](route,
+    // Wrap axios' Promise in a Promise
+    return new Promise((resolve, reject) => {
+      axios[method](route,
         this.data())
-        .then(this.onSuccess.bind(this))
-        .catch(this.onFail.bind(this));
+        .then(response => {
+          this.onSuccess(response.data);
+          resolve(response.data);
+        })
+        .catch(error => {
+          this.onFail(error.response.data);
+          reject(error.response.data);
+        });
+    })
   }
 
   /**
    * Handles a successful response.
    * TODO: Complete functionality to add to db.
-   * @param { object } response
+   * @param { object } data
    */
-  onSuccess(response) {
-    alert(response.data.message);
+  onSuccess(data) {
+    alert(data.message);
     this.reset();
-    this.errors.clear();
   }
 
   /**
    * Handles an error that results from an unsuccessful submission.
    *
-   * @param { object } error
+   * @param { object } errors
    */
-  onFail(error) {
-    this.errors.record(error.response.data);
+  onFail(errors) {
+    this.errors.record(errors);
   }
 
 }
@@ -142,7 +152,9 @@ new Vue({
   },
   methods: {
     onSubmit() {
-      this.form.submit('post', '/projects');
+      this.form.submit('post', '/projects')
+        .then(data => console.log(data))
+        .catch(error => console.log(error));
     },
   }
 });
