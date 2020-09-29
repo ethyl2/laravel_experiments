@@ -95,6 +95,14 @@ class Form {
     return data;
   }
 
+  post(route) {
+    return this.submit('post', route);
+  }
+
+  delete(route) {
+    return this.submit('delete', route);
+  }
+
   /**
    * Handles the submission
    *
@@ -152,7 +160,7 @@ new Vue({
   },
   methods: {
     onSubmit() {
-      this.form.submit('post', '/projects')
+      this.form.post('/projects')
         .then(data => console.log(data))
         .catch(error => console.log(error));
     },
