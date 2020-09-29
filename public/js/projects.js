@@ -9,7 +9,7 @@ class Errors {
   /**
    * Retrieve the error message for a field.
    *
-   * @param {} field
+   * @param { string } field
    */
   get(field) {
     if (this.errors[field]) {
@@ -20,7 +20,7 @@ class Errors {
   /**
    * Update the errors.
    *
-   * @param {} errors
+   * @param { object } errors
    */
   record(errors) {
     this.errors = errors;
@@ -29,7 +29,7 @@ class Errors {
   /**
    * Clear one field (if given) or all fields.
    *
-   * @param {} field
+   * @param {string} field
    */
   clear(field) {
     if (field) {
@@ -45,7 +45,7 @@ class Errors {
   /**
    * Determine if an errors exists for the given field
    *
-   * @param {*} field
+   * @param { *string } field
    */
   has(field) {
     //return !!this.errors[field];
@@ -63,8 +63,7 @@ class Errors {
 class Form {
   /**
    * Create a new Form instance
-   * @param {
-   * } data
+   * @param { object } data
    */
   constructor(data) {
     this.originalData = data;
@@ -97,8 +96,8 @@ class Form {
   /**
    * Handles the submission
    *
-   * @param {} method
-   * @param {*} route
+   * @param { string } method
+   * @param { *string } route
    */
   submit(method, route) {
     axios[method](route,
@@ -110,7 +109,7 @@ class Form {
   /**
    * Handles a successful response.
    * TODO: Complete functionality to add to db.
-   * @param {} response
+   * @param { object } response
    */
   onSuccess(response) {
     alert(response.data.message);
@@ -121,7 +120,7 @@ class Form {
   /**
    * Handles an error that results from an unsuccessful submission.
    *
-   * @param {} error
+   * @param { object } error
    */
   onFail(error) {
     this.errors.record(error.response.data);
